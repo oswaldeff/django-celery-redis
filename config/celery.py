@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from celery import Celery
+from celery.schedules import crontab
 import os
 
 
@@ -13,7 +14,11 @@ app.conf.update(timezone = 'Asia/Seoul')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 # Celery Beat Settings
 app.conf.beat_schedule = {
-    
+    'add-every-dawn-contrab': {
+        'task': 'core.tasks.test_func',
+        'schedule': crontab(minute='*', hour='*', day_of_week='*', day_of_month='*', month_of_year='*'),
+        'args': (),
+    },
 }
 # task 모듈을 모든 등록된 Django App configs에서 load 함
 app.autodiscover_tasks()
