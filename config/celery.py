@@ -1,7 +1,13 @@
 from __future__ import absolute_import
 from celery import Celery
 from celery.schedules import crontab
+from pathlib import Path
 import os
+import dotenv
+
+
+env_file = os.path.join(Path(__file__).resolve().parent.parent, '.env')
+dotenv.read_dotenv(env_file)
 
 
 # Django의 세팅 모듈을 Celery의 기본으로 사용하도록 등록
@@ -16,6 +22,11 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.beat_schedule = {
     'add-every-dawn-contrab': {
         'task': 'core.tasks.test_func',
+        'schedule': crontab(minute='*', hour='*', day_of_week='*', day_of_month='*', month_of_year='*'),
+        'args': (),
+    },
+    'add-every-dawn-contrab': {
+        'task': 'core.tasks.currency_exchange_rate_func',
         'schedule': crontab(minute='*', hour='*', day_of_week='*', day_of_month='*', month_of_year='*'),
         'args': (),
     },
